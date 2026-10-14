@@ -1,7 +1,7 @@
 <?php
 // Konfigurasi database
 $host = 'localhost';
-$db   = 'proyek_pbd';
+$db   = 'proyek_pbd';       // nama database
 $user = 'root';
 $pass = '';
 
@@ -14,7 +14,11 @@ try {
     die('Koneksi database gagal: ' . $e->getMessage());
 }
 
-// Fungsi
+// User yg ada di pojok kanan atas.
+define('PENGGUNA_NAMA', 'Hibban');
+define('PENGGUNA_ROLE', 'Admin');
+
+// Fungsi bantu
 function e($s) {                       // cegah XSS saat menampilkan data
     return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
 }
@@ -36,4 +40,9 @@ function pesanError(PDOException $ex) {        // ubah error MySQL jadi pesan ra
     if ($kode == 1452) return 'Data referensi (relasi) tidak valid.';
     if ($kode == 1062) return 'Data duplikat.';
     return 'Terjadi kesalahan: ' . $ex->getMessage();
+}
+
+function badge($label) {                       // lencana status (Aktif / Nonaktif)
+    $kelas = ($label === 'Aktif') ? 'aktif' : 'nonaktif';
+    return '<span class="badge ' . $kelas . '">' . e($label) . '</span>';
 }
