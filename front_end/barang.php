@@ -34,7 +34,10 @@ if ($mode === 'ubah') {
     if (!$data) $mode = 'list';
 }
 
-$judul = 'Data Barang';
+$form = ($mode === 'tambah' || $mode === 'ubah');
+$judul = $form ? (($mode === 'tambah' ? 'Tambah' : 'Ubah') . ' Barang') : 'Data Barang';
+$subjudul = $form ? '' : 'Master data inventaris dan katalog barang toko';
+$tombol = $form ? null : ['barang.php?mode=tambah', 'Tambah Barang'];
 include 'header.php';
 
 if ($mode === 'tambah' || $mode === 'ubah'):
@@ -77,15 +80,15 @@ if ($mode === 'tambah' || $mode === 'ubah'):
         </select>
 
         <div class="tombol">
-            <button class="btn" type="submit">Simpan</button>
-            <a class="btn batal" href="barang.php">Batal</a>
+            <button class="btn-primary" type="submit">Simpan</button>
+            <a class="btn-sekunder" href="barang.php">Batal</a>
         </div>
     </form>
 <?php else:
     $rows = $pdo->query("SELECT * FROM v_barang ORDER BY idbarang")->fetchAll(); ?>
-    <div class="toolbar"><a class="btn" href="barang.php?mode=tambah">+ Tambah Barang</a></div>
+    <div class="tabel-wrap">
     <table>
-        <tr><th>No</th><th>Nama</th><th>Jenis</th><th>Satuan</th><th>Harga</th><th>Status</th><th>Aksi</th></tr>
+        <tr><th class="c">No</th><th>Nama</th><th>Jenis</th><th>Satuan</th><th>Harga</th><th class="c">Status</th><th class="kanan">Aksi</th></tr>
         <?php foreach ($rows as $i => $r): ?>
         <tr>
             <td><?= $i + 1 ?></td>
@@ -93,18 +96,19 @@ if ($mode === 'tambah' || $mode === 'ubah'):
             <td><?= e($r['jenis_label']) ?></td>
             <td><?= e($r['nama_satuan']) ?></td>
             <td>Rp <?= number_format($r['harga'], 0, ',', '.') ?></td>
-            <td><?= e($r['status_label']) ?></td>
-            <td class="aksi">
-                <a class="btn edit" href="barang.php?mode=ubah&id=<?= $r['idbarang'] ?>">Ubah</a>
-                <form method="post" onsubmit="return confirm('Hapus data ini?')">
+            <td class="c"><?= badge($r['status_label']) ?></td>
+            <td class="aksi kanan">
+                <a class="btn-ubah" href="barang.php?mode=ubah&id=<?= $r['idbarang'] ?>">Ubah</a>
+                <form method="post" class="form-hapus">
                     <input type="hidden" name="aksi" value="hapus">
                     <input type="hidden" name="id" value="<?= $r['idbarang'] ?>">
-                    <button class="btn hapus" type="submit">Hapus</button>
+                    <button class="btn-hapus" type="submit">Hapus</button>
                 </form>
             </td>
         </tr>
         <?php endforeach; ?>
         <?php if (!$rows): ?><tr><td colspan="7" class="kosong">Belum ada data.</td></tr><?php endif; ?>
     </table>
+    </div>
 <?php endif;
 include 'footer.php';

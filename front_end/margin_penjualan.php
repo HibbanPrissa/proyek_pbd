@@ -32,7 +32,10 @@ if ($mode === 'ubah') {
     if (!$data) $mode = 'list';
 }
 
-$judul = 'Data Margin Penjualan';
+$form = ($mode === 'tambah' || $mode === 'ubah');
+$judul = $form ? (($mode === 'tambah' ? 'Tambah' : 'Ubah') . ' Margin Penjualan') : 'Data Margin Penjualan';
+$subjudul = $form ? '' : 'Master data persentase margin penjualan';
+$tombol = $form ? null : ['margin_penjualan.php?mode=tambah', 'Tambah Margin Penjualan'];
 include 'header.php';
 
 if ($mode === 'tambah' || $mode === 'ubah'):
@@ -63,33 +66,34 @@ if ($mode === 'tambah' || $mode === 'ubah'):
         </select>
 
         <div class="tombol">
-            <button class="btn" type="submit">Simpan</button>
-            <a class="btn batal" href="margin_penjualan.php">Batal</a>
+            <button class="btn-primary" type="submit">Simpan</button>
+            <a class="btn-sekunder" href="margin_penjualan.php">Batal</a>
         </div>
     </form>
 <?php else:
     $rows = $pdo->query("SELECT * FROM v_margin_penjualan ORDER BY idmargin_penjualan")->fetchAll(); ?>
-    <div class="toolbar"><a class="btn" href="margin_penjualan.php?mode=tambah">+ Tambah Margin</a></div>
+    <div class="tabel-wrap">
     <table>
-        <tr><th>No</th><th>Persen</th><th>Status</th><th>Dibuat Oleh</th><th>Diperbarui</th><th>Aksi</th></tr>
+        <tr><th class="c">No</th><th>Persen</th><th class="c">Status</th><th>Dibuat Oleh</th><th>Diperbarui</th><th class="kanan">Aksi</th></tr>
         <?php foreach ($rows as $i => $r): ?>
         <tr>
             <td><?= $i + 1 ?></td>
             <td><?= e(rtrim(rtrim(number_format($r['persen'], 2, ',', '.'), '0'), ',')) ?>%</td>
-            <td><?= e($r['status_label']) ?></td>
+            <td class="c"><?= badge($r['status_label']) ?></td>
             <td><?= e($r['dibuat_oleh']) ?></td>
             <td><?= e($r['updated_at']) ?></td>
-            <td class="aksi">
-                <a class="btn edit" href="margin_penjualan.php?mode=ubah&id=<?= $r['idmargin_penjualan'] ?>">Ubah</a>
-                <form method="post" onsubmit="return confirm('Hapus data ini?')">
+            <td class="aksi kanan">
+                <a class="btn-ubah" href="margin_penjualan.php?mode=ubah&id=<?= $r['idmargin_penjualan'] ?>">Ubah</a>
+                <form method="post" class="form-hapus">
                     <input type="hidden" name="aksi" value="hapus">
                     <input type="hidden" name="id" value="<?= $r['idmargin_penjualan'] ?>">
-                    <button class="btn hapus" type="submit">Hapus</button>
+                    <button class="btn-hapus" type="submit">Hapus</button>
                 </form>
             </td>
         </tr>
         <?php endforeach; ?>
         <?php if (!$rows): ?><tr><td colspan="6" class="kosong">Belum ada data.</td></tr><?php endif; ?>
     </table>
+    </div>
 <?php endif;
 include 'footer.php';

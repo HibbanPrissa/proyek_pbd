@@ -32,7 +32,10 @@ if ($mode === 'ubah') {
     if (!$data) $mode = 'list';
 }
 
-$judul = 'Data Vendor';
+$form = ($mode === 'tambah' || $mode === 'ubah');
+$judul = $form ? (($mode === 'tambah' ? 'Tambah' : 'Ubah') . ' Vendor') : 'Data Vendor';
+$subjudul = $form ? '' : 'Master data pemasok barang';
+$tombol = $form ? null : ['vendor.php?mode=tambah', 'Tambah Vendor'];
 include 'header.php';
 
 if ($mode === 'tambah' || $mode === 'ubah'):
@@ -59,32 +62,33 @@ if ($mode === 'tambah' || $mode === 'ubah'):
         </select>
 
         <div class="tombol">
-            <button class="btn" type="submit">Simpan</button>
-            <a class="btn batal" href="vendor.php">Batal</a>
+            <button class="btn-primary" type="submit">Simpan</button>
+            <a class="btn-sekunder" href="vendor.php">Batal</a>
         </div>
     </form>
 <?php else:
     $rows = $pdo->query("SELECT * FROM v_vendor ORDER BY idvendor")->fetchAll(); ?>
-    <div class="toolbar"><a class="btn" href="vendor.php?mode=tambah">+ Tambah Vendor</a></div>
+    <div class="tabel-wrap">
     <table>
-        <tr><th>No</th><th>Nama Vendor</th><th>Badan Hukum</th><th>Status</th><th>Aksi</th></tr>
+        <tr><th class="c">No</th><th>Nama Vendor</th><th>Badan Hukum</th><th class="c">Status</th><th class="kanan">Aksi</th></tr>
         <?php foreach ($rows as $i => $r): ?>
         <tr>
             <td><?= $i + 1 ?></td>
             <td><?= e($r['nama_vendor']) ?></td>
             <td><?= e($r['badan_hukum_label']) ?></td>
-            <td><?= e($r['status_label']) ?></td>
-            <td class="aksi">
-                <a class="btn edit" href="vendor.php?mode=ubah&id=<?= $r['idvendor'] ?>">Ubah</a>
-                <form method="post" onsubmit="return confirm('Hapus data ini?')">
+            <td class="c"><?= badge($r['status_label']) ?></td>
+            <td class="aksi kanan">
+                <a class="btn-ubah" href="vendor.php?mode=ubah&id=<?= $r['idvendor'] ?>">Ubah</a>
+                <form method="post" class="form-hapus">
                     <input type="hidden" name="aksi" value="hapus">
                     <input type="hidden" name="id" value="<?= $r['idvendor'] ?>">
-                    <button class="btn hapus" type="submit">Hapus</button>
+                    <button class="btn-hapus" type="submit">Hapus</button>
                 </form>
             </td>
         </tr>
         <?php endforeach; ?>
         <?php if (!$rows): ?><tr><td colspan="5" class="kosong">Belum ada data.</td></tr><?php endif; ?>
     </table>
+    </div>
 <?php endif;
 include 'footer.php';

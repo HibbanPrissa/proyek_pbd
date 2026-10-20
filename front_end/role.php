@@ -32,7 +32,10 @@ if ($mode === 'ubah') {
     if (!$data) $mode = 'list';
 }
 
-$judul = 'Data Role';
+$form = ($mode === 'tambah' || $mode === 'ubah');
+$judul = $form ? (($mode === 'tambah' ? 'Tambah' : 'Ubah') . ' Role') : 'Data Role';
+$subjudul = $form ? '' : 'Master data hak akses pengguna';
+$tombol = $form ? null : ['role.php?mode=tambah', 'Tambah Role'];
 include 'header.php';
 
 if ($mode === 'tambah' || $mode === 'ubah'): ?>
@@ -44,30 +47,31 @@ if ($mode === 'tambah' || $mode === 'ubah'): ?>
         <input type="text" name="nama_role" maxlength="100" required value="<?= nilai('nama_role', $data) ?>">
 
         <div class="tombol">
-            <button class="btn" type="submit">Simpan</button>
-            <a class="btn batal" href="role.php">Batal</a>
+            <button class="btn-primary" type="submit">Simpan</button>
+            <a class="btn-sekunder" href="role.php">Batal</a>
         </div>
     </form>
 <?php else:
     $rows = $pdo->query("SELECT * FROM v_role ORDER BY idrole")->fetchAll(); ?>
-    <div class="toolbar"><a class="btn" href="role.php?mode=tambah">+ Tambah Role</a></div>
+    <div class="tabel-wrap">
     <table>
-        <tr><th>No</th><th>Nama Role</th><th>Aksi</th></tr>
+        <tr><th class="c">No</th><th>Nama Role</th><th class="kanan">Aksi</th></tr>
         <?php foreach ($rows as $i => $r): ?>
         <tr>
             <td><?= $i + 1 ?></td>
             <td><?= e($r['nama_role']) ?></td>
-            <td class="aksi">
-                <a class="btn edit" href="role.php?mode=ubah&id=<?= $r['idrole'] ?>">Ubah</a>
-                <form method="post" onsubmit="return confirm('Hapus data ini?')">
+            <td class="aksi kanan">
+                <a class="btn-ubah" href="role.php?mode=ubah&id=<?= $r['idrole'] ?>">Ubah</a>
+                <form method="post" class="form-hapus">
                     <input type="hidden" name="aksi" value="hapus">
                     <input type="hidden" name="id" value="<?= $r['idrole'] ?>">
-                    <button class="btn hapus" type="submit">Hapus</button>
+                    <button class="btn-hapus" type="submit">Hapus</button>
                 </form>
             </td>
         </tr>
         <?php endforeach; ?>
         <?php if (!$rows): ?><tr><td colspan="3" class="kosong">Belum ada data.</td></tr><?php endif; ?>
     </table>
+    </div>
 <?php endif;
 include 'footer.php';

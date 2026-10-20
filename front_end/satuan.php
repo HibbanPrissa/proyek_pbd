@@ -32,7 +32,10 @@ if ($mode === 'ubah') {
     if (!$data) $mode = 'list';
 }
 
-$judul = 'Data Satuan';
+$form = ($mode === 'tambah' || $mode === 'ubah');
+$judul = $form ? (($mode === 'tambah' ? 'Tambah' : 'Ubah') . ' Satuan') : 'Data Satuan';
+$subjudul = $form ? '' : 'Master data satuan barang';
+$tombol = $form ? null : ['satuan.php?mode=tambah', 'Tambah Satuan'];
 include 'header.php';
 
 if ($mode === 'tambah' || $mode === 'ubah'):
@@ -51,31 +54,32 @@ if ($mode === 'tambah' || $mode === 'ubah'):
         </select>
 
         <div class="tombol">
-            <button class="btn" type="submit">Simpan</button>
-            <a class="btn batal" href="satuan.php">Batal</a>
+            <button class="btn-primary" type="submit">Simpan</button>
+            <a class="btn-sekunder" href="satuan.php">Batal</a>
         </div>
     </form>
 <?php else:
     $rows = $pdo->query("SELECT * FROM v_satuan ORDER BY idsatuan")->fetchAll(); ?>
-    <div class="toolbar"><a class="btn" href="satuan.php?mode=tambah">+ Tambah Satuan</a></div>
+    <div class="tabel-wrap">
     <table>
-        <tr><th>No</th><th>Nama Satuan</th><th>Status</th><th>Aksi</th></tr>
+        <tr><th class="c">No</th><th>Nama Satuan</th><th class="c">Status</th><th class="kanan">Aksi</th></tr>
         <?php foreach ($rows as $i => $r): ?>
         <tr>
             <td><?= $i + 1 ?></td>
             <td><?= e($r['nama_satuan']) ?></td>
-            <td><?= e($r['status_label']) ?></td>
-            <td class="aksi">
-                <a class="btn edit" href="satuan.php?mode=ubah&id=<?= $r['idsatuan'] ?>">Ubah</a>
-                <form method="post" onsubmit="return confirm('Hapus data ini?')">
+            <td class="c"><?= badge($r['status_label']) ?></td>
+            <td class="aksi kanan">
+                <a class="btn-ubah" href="satuan.php?mode=ubah&id=<?= $r['idsatuan'] ?>">Ubah</a>
+                <form method="post" class="form-hapus">
                     <input type="hidden" name="aksi" value="hapus">
                     <input type="hidden" name="id" value="<?= $r['idsatuan'] ?>">
-                    <button class="btn hapus" type="submit">Hapus</button>
+                    <button class="btn-hapus" type="submit">Hapus</button>
                 </form>
             </td>
         </tr>
         <?php endforeach; ?>
         <?php if (!$rows): ?><tr><td colspan="4" class="kosong">Belum ada data.</td></tr><?php endif; ?>
     </table>
+    </div>
 <?php endif;
 include 'footer.php';
