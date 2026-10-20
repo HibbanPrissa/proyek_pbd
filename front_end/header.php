@@ -1,3 +1,4 @@
+<?php /* header.php - kerangka atas halaman */ ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
