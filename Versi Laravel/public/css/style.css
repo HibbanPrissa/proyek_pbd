@@ -206,3 +206,31 @@ form.isian .tombol { margin-top: 24px; display: flex; gap: 8px; }
 
 /* daftar pesan kesalahan validasi (Laravel) */
 .alert ul { margin: 0; padding-left: 18px; }
+
+/* ===== Tambahan: transaksi ===== */
+.badge.proses { background: #fdf8e2; color: #7d6608; border-color: #d4af37; }
+
+form.isian.lebar { max-width: 760px; }
+.catatan { margin: 14px 0 0; font-size: 12px; color: var(--on-surface-variant); }
+
+.tabel-isian { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+.tabel-isian th { height: 32px; padding: 0 6px; background: transparent; border-bottom: 1px solid var(--garis); }
+.tabel-isian td { height: auto; padding: 6px; border-bottom: 0; }
+.tabel-isian th:first-child, .tabel-isian td:first-child { width: auto; text-align: left; }
+.tabel-isian tr:hover > td { background: transparent; }
+
+.ringkas {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;
+    background: var(--surface); border: 1px solid var(--garis); border-radius: 8px;
+    padding: 16px; margin: 0 0 20px;
+}
+.ringkas div { margin: 0; }
+.ringkas dt { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--outline); }
+.ringkas dd { margin: 4px 0 0; font-weight: 500; }
+
+.total-box { max-width: 320px; margin: 16px 0 0 auto; background: var(--surface); border: 1px solid var(--garis); border-radius: 8px; padding: 12px 16px; }
+.total-box div { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+.total-box .total { border-top: 1px solid var(--garis); margin-top: 6px; padding-top: 8px; font-size: 15px; font-weight: 700; }
+
+form.filter { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+form.filter select { height: 36px; min-width: 280px; padding: 0 12px; border: 1px solid #dcd7ce; border-radius: 8px; font-family: inherit; font-size: 14px; background: #fff; }

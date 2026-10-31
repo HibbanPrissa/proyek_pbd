@@ -21,13 +21,13 @@
             ['rute' => 'margin_penjualan', 'label' => 'Margin Penjualan', 'ikon' => 'price_change', 'ada' => true],
         ]],
         ['grup' => 'Transaksi', 'items' => [
-            ['rute' => 'pengadaan', 'label' => 'Pengadaan', 'ikon' => 'shopping_cart', 'ada' => false],
-            ['rute' => 'penerimaan', 'label' => 'Penerimaan', 'ikon' => 'move_to_inbox', 'ada' => false],
-            ['rute' => 'penjualan', 'label' => 'Penjualan', 'ikon' => 'point_of_sale', 'ada' => false],
-            ['rute' => 'retur', 'label' => 'Retur', 'ikon' => 'assignment_return', 'ada' => false],
+            ['rute' => 'pengadaan', 'label' => 'Pengadaan', 'ikon' => 'shopping_cart', 'ada' => true],
+            ['rute' => 'penerimaan', 'label' => 'Penerimaan', 'ikon' => 'move_to_inbox', 'ada' => true],
+            ['rute' => 'penjualan', 'label' => 'Penjualan', 'ikon' => 'point_of_sale', 'ada' => true],
+            ['rute' => 'retur', 'label' => 'Retur', 'ikon' => 'assignment_return', 'ada' => true],
         ]],
         ['grup' => 'Laporan', 'items' => [
-            ['rute' => 'kartu_stok', 'label' => 'Kartu Stok', 'ikon' => 'receipt_long', 'ada' => false],
+            ['rute' => 'kartu_stok', 'label' => 'Kartu Stok', 'ikon' => 'receipt_long', 'ada' => true],
         ]],
     ];
 @endphp

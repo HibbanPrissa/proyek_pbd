@@ -15,6 +15,7 @@ abstract class Controller
         'integer'  => ':attribute harus berupa angka bulat.',
         'numeric'  => ':attribute harus berupa angka.',
         'exists'   => ':attribute tidak ditemukan.',
+        'array'    => ':attribute tidak valid.',
     ];
 
     // Mengubah error MySQL menjadi pesan yang mudah dipahami
