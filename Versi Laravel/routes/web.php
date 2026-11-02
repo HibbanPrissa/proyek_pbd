@@ -22,6 +22,8 @@ Route::resource('satuan', SatuanController::class)->except('show');
 Route::resource('vendor', VendorController::class)->except('show');
 Route::resource('barang', BarangController::class)->except('show');
 Route::resource('margin_penjualan', MarginPenjualanController::class)->except('show');
+Route::post('margin_penjualan/{id}/aktifkan', [MarginPenjualanController::class, 'aktifkan'])
+    ->name('margin_penjualan.aktifkan');
 Route::resource('pengadaan', PengadaanController::class)->only(['index', 'create', 'store', 'show']);
 Route::resource('penerimaan', PenerimaanController::class)->only(['index', 'create', 'store', 'show']);
 Route::get('kartu_stok', [KartuStokController::class, 'index'])->name('kartu_stok.index');

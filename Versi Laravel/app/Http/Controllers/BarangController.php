@@ -19,7 +19,6 @@ class BarangController extends Controller
         ];
     }
 
-    // Dropdown satuan dari VIEW: hanya yang aktif, ditambah satuan yang sedang dipakai barang ini
     private function daftarSatuan($idSaatIni = null)
     {
         return DB::table('v_satuan')

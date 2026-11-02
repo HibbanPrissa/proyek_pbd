@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\DB;
 
 class PenjualanController extends Controller
 {
-    // Stok terkini = saldo pada baris kartu_stok terbaru milik barang itu.
-    // Nanti bisa diganti FUNCTION fn_stok_barang().
     private function stokBarang($idbarang): int
     {
-        return (int) (DB::table('kartu_stok')->where('idbarang', $idbarang)
-            ->orderByDesc('idkartu_stok')->value('stock') ?? 0);
+        return (int) DB::selectOne('SELECT fn_stok_barang(?) AS stok', [$idbarang])->stok;
     }
-
+    private function hargaJual($idbarang): int
+    {
+        return (int) DB::selectOne('SELECT fn_harga_jual(?) AS harga', [$idbarang])->harga;
+    }
     public function index()
     {
         $rows = DB::table('v_penjualan')->orderByDesc('idpenjualan')->get();
@@ -29,10 +29,9 @@ class PenjualanController extends Controller
                 ->with('galat', 'Belum ada margin aktif. Aktifkan satu margin di menu Margin Penjualan.');
         }
 
-        // harga jual = harga barang + margin aktif; stok dihitung dari kartu stok
         $barang = DB::table('v_barang')->where('status', 1)->orderBy('nama')->get();
         foreach ($barang as $b) {
-            $b->harga_jual = (int) round($b->harga * (1 + $margin->persen / 100));
+            $b->harga_jual = $this->hargaJual($b->idbarang);
             $b->stok       = $this->stokBarang($b->idbarang);
         }
 
@@ -62,15 +61,12 @@ class PenjualanController extends Controller
             return back()->withInput()->with('galat', 'Belum ada margin aktif.');
         }
 
-        // total jumlah per barang (barang yang sama boleh muncul di beberapa baris)
         $perBarang = [];
         foreach ($d['items'] as $item) {
             $perBarang[$item['idbarang']] = ($perBarang[$item['idbarang']] ?? 0) + $item['jumlah'];
         }
         $dataBarang = DB::table('barang')->whereIn('idbarang', array_keys($perBarang))->get()->keyBy('idbarang');
 
-        // BAGIAN A - cek stok dari PHP.
-        // Nanti bisa diganti TRIGGER trg_cek_stok_penjualan.
         foreach ($perBarang as $idbarang => $jumlah) {
             $stok = $this->stokBarang($idbarang);
             if ($stok < $jumlah) {
@@ -80,18 +76,15 @@ class PenjualanController extends Controller
         }
 
         $id = DB::transaction(function () use ($d, $margin, $dataBarang) {
-            // harga satuan = harga barang + margin aktif; subtotal = harga x jumlah
             $baris = [];
             $subtotal = 0;
             foreach ($d['items'] as $item) {
-                $harga = (int) round($dataBarang[$item['idbarang']]->harga * (1 + $margin->persen / 100));
+                $harga = $this->hargaJual($item['idbarang']);
                 $sub   = $harga * $item['jumlah'];
                 $subtotal += $sub;
                 $baris[] = [$item['idbarang'], $item['jumlah'], $harga, $sub];
             }
 
-            // BAGIAN B - total dihitung di PHP (PPN 11%).
-            // Nanti bisa diganti PROCEDURE sp_hitung_total_penjualan / FUNCTION fn_hitung_ppn.
             $ppn = (int) round($subtotal * 0.11);
 
             $id = DB::table('penjualan')->insertGetId([
@@ -111,8 +104,6 @@ class PenjualanController extends Controller
                     'idbarang'              => $idbarang,
                 ]);
 
-                // BAGIAN C - kartu stok diisi dari PHP (barang keluar).
-                // Nanti bisa diganti TRIGGER trg_stok_penjualan (hapus bagian ini kalau dipakai).
                 DB::table('kartu_stok')->insert([
                     'jenis_transaksi' => 'J',          // J = Penjualan
                     'masuk'           => 0,

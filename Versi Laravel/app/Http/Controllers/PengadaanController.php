@@ -41,14 +41,12 @@ class PengadaanController extends Controller
         ]);
 
         $id = DB::transaction(function () use ($d) {
-            // 1) data pengadaan (status P = Proses)
             $id = DB::table('pengadaan')->insertGetId([
                 'user_iduser'     => $d['user_iduser'],
                 'status'          => 'P',
                 'vendor_idvendor' => $d['vendor_idvendor'],
             ]);
 
-            // 2) tiap barang: subtotal = harga x jumlah, dihitung di PHP
             $subtotal = 0;
             foreach ($d['items'] as $item) {
                 $sub = $item['harga_satuan'] * $item['jumlah'];
@@ -63,13 +61,7 @@ class PengadaanController extends Controller
                 ]);
             }
 
-            // 3) total pengadaan: PPN 11% dihitung di PHP
-            $ppn = (int) round($subtotal * 0.11);
-            DB::table('pengadaan')->where('idpengadaan', $id)->update([
-                'subtotal_nilai' => $subtotal,
-                'ppn'            => $ppn,
-                'total_nilai'    => $subtotal + $ppn,
-            ]);
+            DB::select('CALL sp_hitung_total_pengadaan(?)', [$id]);
 
             return $id;
         });

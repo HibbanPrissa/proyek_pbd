@@ -21,6 +21,12 @@
                 <td>{{ $r->dibuat_oleh }}</td>
                 <td>{{ $r->updated_at }}</td>
                 <td class="aksi kanan">
+                    @if ($r->status != 1)
+                        <form method="post" action="{{ route('margin_penjualan.aktifkan', $r->idmargin_penjualan) }}">
+                            @csrf
+                            <button class="btn-aktif" type="submit">Jadikan Aktif</button>
+                        </form>
+                    @endif
                     <a class="btn-ubah" href="{{ route('margin_penjualan.edit', $r->idmargin_penjualan) }}">Ubah</a>
                     <form method="post" action="{{ route('margin_penjualan.destroy', $r->idmargin_penjualan) }}" class="form-hapus">
                         @csrf

@@ -19,7 +19,7 @@ class MarginPenjualanController extends Controller
 
     private function daftarUser()
     {
-        return DB::table('v_user')->orderBy('username')->get();   // dropdown dari VIEW
+        return DB::table('v_user')->orderBy('username')->get();
     }
 
     public function index()
@@ -66,5 +66,17 @@ class MarginPenjualanController extends Controller
         }
 
         return redirect()->route('margin_penjualan.index')->with('sukses', 'Margin berhasil dihapus.');
+    }
+
+    public function aktifkan($id)
+    {
+        try {
+            DB::select('CALL sp_set_margin_aktif(?)', [$id]);
+        } catch (QueryException $e) {
+            return redirect()->route('margin_penjualan.index')->with('galat', $this->pesanGalat($e));
+        }
+
+        return redirect()->route('margin_penjualan.index')
+            ->with('sukses', 'Margin berhasil diaktifkan. Margin lain otomatis dinonaktifkan.');
     }
 }

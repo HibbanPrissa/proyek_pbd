@@ -13,9 +13,9 @@ class KartuStokController extends Controller
 
         $query = DB::table('v_kartu_stok');
         if ($idbarang) {
-            $query->where('idbarang', $idbarang)->orderBy('idkartu_stok');   // satu barang: urut waktu
+            $query->where('idbarang', $idbarang)->orderBy('idkartu_stok');
         } else {
-            $query->orderByDesc('idkartu_stok');                              // semua: terbaru di atas
+            $query->orderByDesc('idkartu_stok');
         }
 
         return view('kartu_stok.index', [

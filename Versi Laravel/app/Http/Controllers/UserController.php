@@ -12,7 +12,6 @@ class UserController extends Controller
     {
         return [
             'username' => 'required|max:45',
-            // saat tambah password wajib, saat ubah boleh kosong (tidak diganti)
             'password' => ($baru ? 'required' : 'nullable') . '|max:50',
             'idrole'   => 'required|integer|exists:role,idrole',
         ];
@@ -20,7 +19,7 @@ class UserController extends Controller
 
     private function daftarRole()
     {
-        return DB::table('v_role')->orderBy('nama_role')->get();   // dropdown dari VIEW
+        return DB::table('v_role')->orderBy('nama_role')->get();
     }
 
     public function index()
@@ -37,8 +36,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $d = $request->validate($this->aturan(true), $this->pesan);
-
-        // hash SHA-256, hasilnya sama dengan SHA2(password, 256) di MySQL
         $d['password'] = hash('sha256', $d['password']);
         DB::table('user')->insert($d);
 
@@ -60,7 +57,7 @@ class UserController extends Controller
         if (! empty($d['password'])) {
             $d['password'] = hash('sha256', $d['password']);
         } else {
-            unset($d['password']);   // dikosongkan = password lama tetap
+            unset($d['password']);
         }
 
         DB::table('user')->where('iduser', $id)->update($d);

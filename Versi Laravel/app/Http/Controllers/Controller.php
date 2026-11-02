@@ -6,7 +6,6 @@ use Illuminate\Database\QueryException;
 
 abstract class Controller
 {
-    // Pesan validasi dalam bahasa Indonesia, dipakai semua controller
     protected array $pesan = [
         'required' => ':attribute wajib diisi.',
         'max'      => ':attribute maksimal :max karakter.',
@@ -18,7 +17,6 @@ abstract class Controller
         'array'    => ':attribute tidak valid.',
     ];
 
-    // Mengubah error MySQL menjadi pesan yang mudah dipahami
     protected function pesanGalat(QueryException $e): string
     {
         $kode = $e->errorInfo[1] ?? 0;
@@ -27,6 +25,7 @@ abstract class Controller
             1451    => 'Data tidak bisa dihapus karena masih dipakai di tabel lain.',
             1452    => 'Data referensi (relasi) tidak valid.',
             1062    => 'Data duplikat.',
+            1644    => $e->errorInfo[2] ?? 'Proses ditolak oleh database.',
             default => 'Terjadi kesalahan pada database.',
         };
     }

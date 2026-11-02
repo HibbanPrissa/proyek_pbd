@@ -92,21 +92,17 @@ class PenerimaanController extends Controller
                     'sub_total_terima'    => $jml * $det->harga_satuan,
                 ]);
 
-                // BAGIAN A - kartu stok diisi dari PHP.
-                // Nanti bisa diganti TRIGGER trg_stok_penerimaan (hapus bagian ini kalau dipakai).
-                $stokLama = DB::table('kartu_stok')->where('idbarang', $det->idbarang)
-                    ->orderByDesc('idkartu_stok')->value('stock') ?? 0;
-                DB::table('kartu_stok')->insert([
-                    'jenis_transaksi' => 'P',          // P = Penerimaan
-                    'masuk'           => $jml,
-                    'keluar'          => 0,
-                    'stock'           => $stokLama + $jml,
-                    'idtransaksi'     => $idterima,
-                    'idbarang'        => $det->idbarang,
+                foreach ($baris as [$det, $jml]) {
+                DB::table('detail_penerimaan')->insert([
+                    'idpenerimaan'        => $idterima,
+                    'barang_idbarang'     => $det->idbarang,
+                    'jumlah_terima'       => $jml,
+                    'harga_satuan_terima' => $det->harga_satuan,
+                    'sub_total_terima'    => $jml * $det->harga_satuan,
                 ]);
+                }
             }
 
-            // pengadaan yang sudah diterima berstatus S = Selesai
             DB::table('pengadaan')->where('idpengadaan', $d['idpengadaan'])->update(['status' => 'S']);
 
             return $idterima;

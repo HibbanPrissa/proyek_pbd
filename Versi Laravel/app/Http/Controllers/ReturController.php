@@ -7,15 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class ReturController extends Controller
 {
-    // Stok terkini = saldo pada baris kartu_stok terbaru milik barang itu.
-    // Nanti bisa diganti FUNCTION fn_stok_barang().
     private function stokBarang($idbarang): int
     {
-        return (int) (DB::table('kartu_stok')->where('idbarang', $idbarang)
-            ->orderByDesc('idkartu_stok')->value('stock') ?? 0);
+        return (int) DB::selectOne('SELECT fn_stok_barang(?) AS stok', [$idbarang])->stok;
     }
 
-    // Jumlah yang sudah diretur untuk satu baris penerimaan
     private function sudahRetur($iddetailPenerimaan): int
     {
         return (int) DB::table('detail_retur')->where('iddetail_penerimaan', $iddetailPenerimaan)->sum('jumlah');
@@ -73,7 +69,7 @@ class ReturController extends Controller
         ]);
 
         $baris = [];
-        $dipakai = [];   // jumlah retur per barang, untuk cek stok kumulatif
+        $dipakai = [];
         $detail = DB::table('detail_penerimaan')->where('idpenerimaan', $d['idpenerimaan'])->get();
 
         foreach ($detail as $det) {
@@ -87,13 +83,10 @@ class ReturController extends Controller
                 return back()->withInput()->with('galat', 'Alasan retur wajib diisi untuk barang yang diretur.');
             }
 
-            // BAGIAN A - jumlah retur tidak boleh melebihi jumlah diterima.
-            // Nanti bisa diganti TRIGGER trg_cek_retur.
             if ($this->sudahRetur($det->iddetail_penerimaan) + $jml > $det->jumlah_terima) {
                 return back()->withInput()->with('galat', 'Jumlah retur melebihi jumlah barang yang diterima.');
             }
 
-            // stok tidak boleh menjadi minus
             $dipakai[$det->barang_idbarang] = ($dipakai[$det->barang_idbarang] ?? 0) + $jml;
             $stok = $this->stokBarang($det->barang_idbarang);
             if ($stok < $dipakai[$det->barang_idbarang]) {
@@ -121,8 +114,6 @@ class ReturController extends Controller
                     'iddetail_penerimaan' => $det->iddetail_penerimaan,
                 ]);
 
-                // BAGIAN B - kartu stok diisi dari PHP (barang keluar).
-                // Nanti bisa diganti TRIGGER trg_stok_retur (hapus bagian ini kalau dipakai).
                 DB::table('kartu_stok')->insert([
                     'jenis_transaksi' => 'R',          // R = Retur
                     'masuk'           => 0,

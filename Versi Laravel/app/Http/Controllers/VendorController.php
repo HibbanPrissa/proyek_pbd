@@ -12,8 +12,8 @@ class VendorController extends Controller
     {
         return [
             'nama_vendor' => 'required|max:100',
-            'badan_hukum' => 'required|in:P,C,U',   // P = PT, C = CV, U = UD
-            'status'      => 'required|in:A,N',     // A = aktif, N = nonaktif
+            'badan_hukum' => 'required|in:P,C,U',
+            'status'      => 'required|in:A,N',
         ];
     }
 

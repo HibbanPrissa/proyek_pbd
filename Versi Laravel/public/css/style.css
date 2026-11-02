@@ -234,3 +234,10 @@ form.isian.lebar { max-width: 760px; }
 
 form.filter { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 form.filter select { height: 36px; min-width: 280px; padding: 0 12px; border: 1px solid #dcd7ce; border-radius: 8px; font-family: inherit; font-size: 14px; background: #fff; }
+
+.btn-aktif {
+    display: inline-block; padding: 4px 12px; border-radius: 8px; border: 1px solid var(--primary-container);
+    background: var(--primary-container); color: #fff; font-family: inherit; font-size: 12px; line-height: 16px;
+    font-weight: 500; cursor: pointer;
+}
+.btn-aktif:hover { background: #0a484d; }

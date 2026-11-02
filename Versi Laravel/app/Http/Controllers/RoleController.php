@@ -15,7 +15,7 @@ class RoleController extends Controller
 
     public function index()
     {
-        $rows = DB::table('v_role')->orderBy('idrole')->get();   // baca dari VIEW
+        $rows = DB::table('v_role')->orderBy('idrole')->get();
         return view('role.index', compact('rows'));
     }
 

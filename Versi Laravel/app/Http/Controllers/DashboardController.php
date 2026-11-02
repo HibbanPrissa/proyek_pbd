@@ -8,7 +8,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // jumlah data dihitung dari VIEW
         $daftar = [
             ['nama' => 'Role',   'view' => 'v_role',             'rute' => 'role',             'ikon' => 'admin_panel_settings'],
             ['nama' => 'User',   'view' => 'v_user',             'rute' => 'user',             'ikon' => 'manage_accounts'],
